@@ -1,10 +1,9 @@
-
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { NavLink, useParams } from 'react-router';
 import type { BorrowWithBook } from '../types/BorrowWithBook';
 
 const mockBorrow: BorrowWithBook = {
-    _id: "borrow-id-123",
+    _id: "685c2d4bec16ffe4976918c1",
     quantity: 1,
     dueDate: "2025-07-15",
     book: {
@@ -19,15 +18,37 @@ const mockBorrow: BorrowWithBook = {
 };
 
 const GetBorrow = () => {
-    const { id } = useParams();
+    const { bookId } = useParams();
     const [borrow, setBorrow] = useState<BorrowWithBook | null>(null);
+    const [quantity, setQuantity] = useState(1);
+    const [dueDate, setDueDate] = useState("");
 
     useEffect(() => {
         // Simulate fetching from API by ID
-        if (id === mockBorrow._id) {
+        if (bookId === mockBorrow._id) {
             setBorrow(mockBorrow);
+            setDueDate(mockBorrow.dueDate); // Optional default
         }
-    }, [id]);
+    }, [bookId]);
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!quantity || !dueDate) {
+            alert("Please enter both quantity and due date.");
+            return;
+        }
+
+        const borrowData = {
+            bookId,
+            quantity,
+            dueDate,
+        };
+
+        console.log("Borrowed:", borrowData);
+
+        // TODO: Replace with actual API call
+        alert("Book borrowed successfully!");
+    };
 
     if (!borrow) {
         return (
@@ -42,9 +63,26 @@ const GetBorrow = () => {
     return (
         <div className="min-h-screen bg-white p-6">
             <div className="max-w-3xl mx-auto bg-gray-50 p-8 shadow rounded-xl border border-gray-200">
-                <h1 className="text-2xl font-bold text-indigo-700 mb-4">Borrow Details</h1>
+                <NavLink
+                    to="/books"
+                    className="inline-flex items-center mb-6 text-indigo-600 hover:text-indigo-800 font-medium transition"
+                >
+                    <svg
+                        className="w-5 h-5 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back
+                </NavLink>
+                <h1 className="text-2xl font-bold text-indigo-700 mb-4">Borrow Book</h1>
 
-                <div className="space-y-4">
+                {/* Book Info */}
+                <div className="space-y-4 mb-6">
                     <div>
                         <h2 className="text-xl font-semibold text-purple-700">{book.title}</h2>
                         <p className="text-sm text-indigo-600 mb-1">by {book.author}</p>
@@ -57,17 +95,47 @@ const GetBorrow = () => {
                         <p><strong>Copies:</strong> {book.copies}</p>
                         <p>
                             <strong>Available:</strong>{" "}
-                            <span
-                                className={`font-medium ${book.available ? "text-green-600" : "text-red-600"
-                                    }`}
-                            >
+                            <span className={`font-medium ${book.available ? "text-green-600" : "text-red-600"}`}>
                                 {book.available ? "Yes" : "No"}
                             </span>
                         </p>
-                        <p><strong>Borrowed Quantity:</strong> {borrow.quantity}</p>
-                        <p><strong>Due Date:</strong> {new Date(borrow.dueDate).toDateString()}</p>
                     </div>
                 </div>
+
+                {/* Borrow Form */}
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Quantity</label>
+                        <input
+                            type="number"
+                            min={1}
+                            max={book.copies}
+                            value={quantity}
+                            onChange={(e) => setQuantity(parseInt(e.target.value))}
+                            required
+                            className="mt-1 w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Due Date</label>
+                        <input
+                            type="date"
+                            value={dueDate}
+                            onChange={(e) => setDueDate(e.target.value)}
+                            required
+                            className="mt-1 w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md transition"
+                        disabled={!book.available}
+                    >
+                        Borrow Book
+                    </button>
+                </form>
             </div>
         </div>
     );

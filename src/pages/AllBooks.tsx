@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import type { Book } from '../types/Book';
+import { NavLink } from 'react-router';
 
 
 // src/data/mockBooks.ts
@@ -15,8 +16,6 @@ const mockBooks: Book[] = [
         description: "An overview of cosmology and black holes.",
         copies: 5,
         available: true,
-        createdAt: "2025-06-25T17:09:31.509Z",
-        updatedAt: "2025-06-25T17:09:31.509Z",
     },
     {
         _id: "685c2d4bec16ffe4976918c1",
@@ -27,8 +26,6 @@ const mockBooks: Book[] = [
         description: "An overview of cosmology and black holes.",
         copies: 5,
         available: true,
-        createdAt: "2025-06-25T17:09:31.509Z",
-        updatedAt: "2025-06-25T17:09:31.509Z",
     },
     {
         _id: "685c2d4bec16ffe4976918c1",
@@ -38,9 +35,7 @@ const mockBooks: Book[] = [
         isbn: "192648735",
         description: "An overview of cosmology and black holes.",
         copies: 5,
-        available: false,
-        createdAt: "2025-06-25T17:09:31.509Z",
-        updatedAt: "2025-06-25T17:09:31.509Z",
+        available: false
     },
 ];
 
@@ -102,13 +97,13 @@ const AllBooks = () => {
                                 <div className="absolute inset-0 backdrop-blur-xs bg-indigo-600/25 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                                     <div className="flex space-x-4">
                                         {
-                                            book.available && <button className="px-4 py-2 cursor-pointer bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 transition">
+                                            book.available && <NavLink to={`/borrow/${book._id}`} className="px-4 py-2 cursor-pointer bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 transition">
                                                 Borrow
-                                            </button>
+                                            </NavLink>
                                         }
-                                        <button className="px-4 py-2 cursor-pointer bg-white text-indigo-700 text-sm font-semibold rounded-lg hover:bg-gray-100 transition">
+                                        <NavLink to={`/books/${book._id}`} className="px-4 py-2 cursor-pointer bg-white text-indigo-700 text-sm font-semibold rounded-lg hover:bg-gray-100 transition">
                                             View
-                                        </button>
+                                        </NavLink>
                                     </div>
                                 </div>
                             </div>
