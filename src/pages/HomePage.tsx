@@ -1,4 +1,4 @@
-
+import logo from "../assets/images/logo.png";
 
 const HomePage = () => {
     return (
@@ -24,7 +24,7 @@ const HomePage = () => {
                     <div className="relative w-80 h-80">
                         <div className="absolute inset-0 rounded-3xl bg-gradient-to-tr from-purple-200 via-indigo-100 to-white shadow-2xl"></div>
                         <img
-                            src="https://img.icons8.com/ios-filled/250/4F46E5/books.png"
+                            src={logo}
                             alt="Library Illustration"
                             className="relative z-10 w-60 h-60 mx-auto mt-10"
                         />
