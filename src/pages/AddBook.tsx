@@ -1,6 +1,6 @@
-// src/pages/AddBook.tsx
-
 import { useState } from 'react';
+import { useCreateBookMutation } from '../redux/api/baseApi';
+import toast from 'react-hot-toast';
 
 interface BookFormData {
     title: string;
@@ -24,6 +24,7 @@ const initialFormData: BookFormData = {
 
 const AddBook = () => {
     const [formData, setFormData] = useState<BookFormData>(initialFormData);
+    const [createBook, { isLoading }] = useCreateBookMutation();
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -43,12 +44,10 @@ const AddBook = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Book Submitted:', formData);
-        // TODO: send data to API/backend
-        alert('Book added successfully!');
+        createBook(formData);
+        toast.success('Book added successfully!');
         setFormData(initialFormData);
     };
-
     return (
         <div className="min-h-screen bg-gray-50 p-6">
             <div className="max-w-2xl mx-auto bg-white shadow-md rounded-xl p-8 border border-gray-200">
@@ -61,6 +60,7 @@ const AddBook = () => {
                             name="title"
                             value={formData.title}
                             onChange={handleChange}
+                            placeholder='e.g The Theory of Everything'
                             required
                             className="mt-1 w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         />
@@ -73,6 +73,7 @@ const AddBook = () => {
                             name="author"
                             value={formData.author}
                             onChange={handleChange}
+                            placeholder='e.g Stephen Hawking'
                             required
                             className="mt-1 w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         />
@@ -83,6 +84,7 @@ const AddBook = () => {
                         <input
                             type="text"
                             name="genre"
+                            placeholder='e.g Science'
                             value={formData.genre}
                             onChange={handleChange}
                             required
@@ -95,6 +97,7 @@ const AddBook = () => {
                         <input
                             type="text"
                             name="isbn"
+                            placeholder='e.g 9780553380167'
                             value={formData.isbn}
                             onChange={handleChange}
                             required
@@ -106,6 +109,7 @@ const AddBook = () => {
                         <label className="block text-sm font-medium text-gray-700">Description</label>
                         <textarea
                             name="description"
+                            placeholder='text...'
                             value={formData.description}
                             onChange={handleChange}
                             rows={3}
@@ -140,7 +144,8 @@ const AddBook = () => {
 
                     <button
                         type="submit"
-                        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md transition"
+                        disabled={isLoading}
+                        className="w-full cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-md transition"
                     >
                         Add Book
                     </button>

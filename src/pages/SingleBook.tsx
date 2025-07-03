@@ -1,38 +1,23 @@
-// src/pages/SingleBook.tsx
-
-import { useEffect, useState } from 'react';
 import { NavLink, useParams } from 'react-router';
-import type { Book } from '../types/Book';
+import { useGetSingleBookQuery } from '../redux/api/baseApi';
 
-const mockBook: Book = {
-    _id: "685c2d4bec16ffe4976918c1",
-    title: 'The Theory of Everything',
-    author: 'Stephen Hawking',
-    genre: 'Science',
-    isbn: '9780553380167',
-    description: 'An overview of cosmology and black holes.An overview of cosmology and black holes.An overview of cosmology and black holes.An overview of cosmology and black holes.An overview of cosmology and black holes.An overview of cosmology and black holes.An overview of cosmology and black holes.An overview of cosmology and black holes.An overview of cosmology and black holes.An overview of cosmology and black holes.An overview of cosmology and black holes.An overview of cosmology and black holes.',
-    copies: 5,
-    available: true,
-};
 
 const SingleBook = () => {
     const { id } = useParams();
-    const [book, setBook] = useState<Book | null>(null);
-    console.log(id)
-    useEffect(() => {
-        // Simulate API fetch
-        if (id === mockBook._id) {
-            setBook(mockBook);
-        }
-    }, [id]);
+    const { data, isLoading } = useGetSingleBookQuery(id as string);
 
-    if (!book) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-100">
-                <p className="text-lg text-gray-600">Loading book details...</p>
-            </div>
-        );
-    }
+    // for loading
+    if (isLoading) {
+        return <div className='min-h-screen flex justify-center items-center'>
+            <p className='font-bold text-center'>Loading...</p>
+        </div>
+    };
+    // for no data
+    if (!data || !data.data) {
+        return <div className='min-h-screen flex justify-center items-center'>
+            <p className='font-bold text-center'>No Data Found</p>
+        </div>
+    };
 
     return (
         <div className="min-h-screen bg-white p-6">
@@ -57,34 +42,34 @@ const SingleBook = () => {
 
                 <div className="space-y-4">
                     <div>
-                        <h2 className="text-xl font-semibold text-purple-700">{book.title}</h2>
-                        <p className="text-sm text-indigo-600 mb-1">by {book.author}</p>
-                        <p className="text-gray-700 text-sm mt-2">{book.description}</p>
+                        <h2 className="text-xl font-semibold text-purple-700">{data?.data?.title}</h2>
+                        <p className="text-sm text-indigo-600 mb-1">by {data.data?.author}</p>
+                        <p className="text-gray-700 text-sm mt-2">{data.data?.description}</p>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-600">
-                        <p><strong>Genre:</strong> {book.genre}</p>
-                        <p><strong>ISBN:</strong> {book.isbn}</p>
-                        <p><strong>Copies:</strong> {book.copies}</p>
+                        <p><strong>Genre:</strong> {data.data?.genre}</p>
+                        <p><strong>ISBN:</strong> {data.data?.isbn}</p>
+                        <p><strong>Copies:</strong> {data.data?.copies}</p>
                         <p>
                             <strong>Available:</strong>{" "}
                             <span
-                                className={`font-medium ${book.available ? "text-green-600" : "text-red-600"
+                                className={`font-medium ${data.data?.available ? "text-green-600" : "text-red-600"
                                     }`}
                             >
-                                {book.available ? "Yes" : "No"}
+                                {data.data?.available ? "Yes" : "No"}
                             </span>
                         </p>
                     </div>
 
                     <div className="pt-4 flex gap-4">
-                        {book.available && <NavLink to={`/borrow/${book._id}`}
+                        {data.data?.available && <NavLink to={`/borrow/${data.data?._id}`}
                             className="px-5 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition cursor-pointer"
                         >
-                            {book.available ? 'Borrow This Book' : 'Not Available'}
+                            {data.data?.available ? 'Borrow This Book' : 'Not Available'}
                         </NavLink>}
                         <NavLink
-                            to={`/edit-book/${book._id}`}
+                            to={`/edit-book/${data.data?._id}`}
                             className="px-5 py-2 bg-yellow-500 text-white font-semibold rounded-lg hover:bg-yellow-600 transition cursor-pointer flex items-center gap-2"
                             title="Edit this book"
                         >

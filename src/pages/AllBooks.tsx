@@ -1,65 +1,30 @@
-// src/pages/AllBooks.tsx
-
-import { useEffect, useState } from 'react';
 import type { Book } from '../types/Book';
 import { NavLink } from 'react-router';
-
-
-// src/data/mockBooks.ts
-const mockBooks: Book[] = [
-    {
-        _id: "685c2d4bec16ffe4976918c1",
-        title: "The Theory of Everything",
-        author: "Stephen Hawking",
-        genre: "SIXPACK",
-        isbn: "192648735",
-        description: "An overview of cosmology and black holes.",
-        copies: 5,
-        available: true,
-    },
-    {
-        _id: "685c2d4bec16ffe4976918c1",
-        title: "The Theory of Everything",
-        author: "Stephen Hawking",
-        genre: "SIXPACK",
-        isbn: "192648735",
-        description: "An overview of cosmology and black holes.",
-        copies: 5,
-        available: true,
-    },
-    {
-        _id: "685c2d4bec16ffe4976918c1",
-        title: "The Theory of Everything",
-        author: "Stephen Hawking",
-        genre: "SIXPACK",
-        isbn: "192648735",
-        description: "An overview of cosmology and black holes.",
-        copies: 5,
-        available: false
-    },
-];
+import { useGetBooksQuery } from '../redux/api/baseApi';
 
 
 const AllBooks = () => {
-    const [books, setBooks] = useState<Book[]>([]);
+    const { isLoading, data } = useGetBooksQuery(undefined);
 
-    useEffect(() => {
-        // Replace with actual API call
-        setBooks(mockBooks);
-    }, []);
+    // for loading
+    if (isLoading) {
+        return <div className='min-h-screen flex justify-center items-center'>
+            <p className='font-bold text-center'>Loading...</p>
+        </div>
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 p-6">
             <div className="max-w-6xl mx-auto">
                 <h1 className="text-3xl font-bold text-indigo-700 mb-6 text-center">All Books</h1>
 
-                {books.length === 0 ? (
+                {data.length === 0 ? (
                     <div className="flex justify-center items-center" style={{ minHeight: 'calc(100vh - 200px)' }}>
                         <p className="text-center text-gray-600 font-bold text-lg">No books available.</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                        {books.map((book) => (
+                        {data.data.map((book: Book) => (
                             <div
                                 key={book._id}
                                 className="relative bg-white border border-gray-200 rounded-2xl shadow-sm p-5 flex flex-col justify-between hover:shadow-md transition group overflow-hidden"
