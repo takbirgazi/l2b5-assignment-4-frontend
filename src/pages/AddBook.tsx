@@ -45,8 +45,8 @@ const AddBook = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         createBook(formData);
-        toast.success('Book added successfully!');
         setFormData(initialFormData);
+        toast.success('Book added successfully!');
     };
     return (
         <div className="min-h-screen bg-gray-50 p-6">
