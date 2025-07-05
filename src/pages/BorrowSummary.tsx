@@ -1,43 +1,32 @@
 
-import { useEffect, useState } from 'react';
 import type { BorrowSummaryType } from '../types/BorrowSummaryType';
+import { useGetBorrowsQuery } from '../redux/api/baseApi';
 
-
-const mockSummary: BorrowSummaryType[] = [
-    {
-        totalQuantity: 2,
-        book: {
-            title: 'The Theory of Everything',
-            isbn: '9780553380167',
-        },
-    },
-    {
-        totalQuantity: 5,
-        book: {
-            title: 'A Brief History of Time',
-            isbn: '9780553380168',
-        },
-    },
-];
 
 const BorrowSummary = () => {
-    const [summaryList, setSummaryList] = useState<BorrowSummaryType[]>([]);
+    const { data, isLoading } = useGetBorrowsQuery(undefined)
 
-    useEffect(() => {
-        // Simulate fetching from API
-        setSummaryList(mockSummary);
-    }, []);
+    if (isLoading) {
+        return <div className='min-h-screen flex justify-center items-center'>
+            <p className='font-bold text-center'>Loading...</p>
+        </div>
+    }
+    if (!data || !data.data) {
+        return <div className='min-h-screen flex justify-center items-center'>
+            <p className='font-bold text-center'>No Data Found.</p>
+        </div>
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 p-6">
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-3xl font-bold text-indigo-700 mb-8 text-center">Borrow Summary</h1>
 
-                {summaryList.length === 0 ? (
+                {data?.data.length === 0 ? (
                     <p className="text-center text-gray-600">No borrowed books found.</p>
                 ) : (
                     <div className="space-y-4">
-                        {summaryList.map((item, index) => (
+                        {data?.data.map((item: BorrowSummaryType, index: number) => (
                             <div
                                 key={index}
                                 className="bg-white shadow-sm rounded-xl border border-gray-200 p-6 hover:shadow-md transition"

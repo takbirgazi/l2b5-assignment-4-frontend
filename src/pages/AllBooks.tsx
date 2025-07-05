@@ -62,10 +62,16 @@ const AllBooks = () => {
         </div>
     );
     // Confirm Modal End
-
+    
+   // Loading State
     if (isLoading) {
         return <div className='min-h-screen flex justify-center items-center'>
             <p className='font-bold text-center'>Loading...</p>
+        </div>
+    }
+    if (!data || !data.data) {
+        return <div className='min-h-screen flex justify-center items-center'>
+            <p className='font-bold text-center'>No Data Found.</p>
         </div>
     }
 
