@@ -11,7 +11,8 @@ export const baseApi = createApi({
             providesTags: ["books"]
         }),
         getSingleBook: builder.query({
-            query: (_id: string) => `/books/${_id}`
+            query: (_id: string) => `/books/${_id}`,
+            providesTags: ["books"]
         }),
         createBook: builder.mutation({
             query: (bookData) => ({
@@ -26,7 +27,7 @@ export const baseApi = createApi({
                 url: `/books/${_id}`,
                 method: "DELETE",
             }),
-            invalidatesTags: ["books"]
+            invalidatesTags: ["books", "borrow"]
         }),
         editBook: builder.mutation({
             query: ({ _id, bookData }) => ({
@@ -34,12 +35,20 @@ export const baseApi = createApi({
                 method: "PUT",
                 body: bookData
             }),
-            invalidatesTags: ["books"]
+            invalidatesTags: ["books", "borrow"]
         }),
         getBorrows: builder.query({
             query: () => "/borrow",
             providesTags: ["borrow"]
         }),
+        createBorrow: builder.mutation({
+            query: (borrowData) => ({
+                url: "/borrow",
+                method: "POST",
+                body: borrowData
+            }),
+            invalidatesTags: ["books", "borrow"]
+        })
     })
 });
 
@@ -50,5 +59,6 @@ export const {
     useGetSingleBookQuery,
     useDeleteBookMutation,
     useEditBookMutation,
-    useGetBorrowsQuery
+    useGetBorrowsQuery,
+    useCreateBorrowMutation
 } = baseApi;

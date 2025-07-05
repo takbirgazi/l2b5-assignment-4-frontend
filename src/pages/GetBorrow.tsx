@@ -1,35 +1,54 @@
 import { useEffect, useState } from 'react';
 import { NavLink, useParams } from 'react-router';
 import type { BorrowWithBook } from '../types/BorrowWithBook';
-
-const mockBorrow: BorrowWithBook = {
-    _id: "685c2d4bec16ffe4976918c1",
-    quantity: 1,
-    dueDate: "2025-07-15",
-    book: {
-        title: "The Theory of Everything",
-        author: "Stephen Hawking",
-        genre: "Science",
-        isbn: "9780553380167",
-        description: "An overview of cosmology and black holes.",
-        copies: 5,
-        available: true,
-    },
-};
+import { useCreateBorrowMutation, useGetSingleBookQuery } from '../redux/api/baseApi';
+import toast from 'react-hot-toast';
 
 const GetBorrow = () => {
     const { bookId } = useParams();
+    const { data, isLoading } = useGetSingleBookQuery(bookId as string, {
+        refetchOnFocus: true,
+        refetchOnMountOrArgChange: true,
+        refetchOnReconnect: true
+    });
+    const [createBorrow] = useCreateBorrowMutation();
+
     const [borrow, setBorrow] = useState<BorrowWithBook | null>(null);
     const [quantity, setQuantity] = useState(1);
     const [dueDate, setDueDate] = useState("");
 
+    // Populate form data when API data is loaded
     useEffect(() => {
-        // Simulate fetching from API by ID
-        if (bookId === mockBorrow._id) {
-            setBorrow(mockBorrow);
-            setDueDate(mockBorrow.dueDate); // Optional default
+        if (data && data.data) {
+            setBorrow({
+                _id: data.data._id || '',
+                quantity: 1,
+                dueDate: "",
+                book: {
+                    title: data.data.title || '',
+                    author: data.data.author || '',
+                    genre: data.data.genre || '',
+                    isbn: data.data.isbn || '',
+                    description: data.data.description || '',
+                    copies: data.data.copies || 0,
+                    available: data.data.available ?? true,
+                }
+            });
         }
-    }, [bookId]);
+    }, [data]);
+
+    // for loading
+    if (isLoading) {
+        return <div className='min-h-screen flex justify-center items-center'>
+            <p className='font-bold text-center'>Loading...</p>
+        </div>
+    };
+    // for no data
+    if (!data || !data.data) {
+        return <div className='min-h-screen flex justify-center items-center'>
+            <p className='font-bold text-center'>No Data Found</p>
+        </div>
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -37,17 +56,13 @@ const GetBorrow = () => {
             alert("Please enter both quantity and due date.");
             return;
         }
-
         const borrowData = {
-            bookId,
+            book: bookId,
             quantity,
             dueDate,
         };
-
-        console.log("Borrowed:", borrowData);
-
-        // TODO: Replace with actual API call
-        alert("Book borrowed successfully!");
+        createBorrow(borrowData);
+        toast.success('Book Borrowed successfully!');
     };
 
     if (!borrow) {
